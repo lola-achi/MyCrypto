@@ -81,7 +81,8 @@ export function WalletBreakdown() {
       name: asset.name || translateRaw('WALLET_BREAKDOWN_UNKNOWN'),
       ticker: asset.ticker,
       amount: weiToFloat(asset.balance, asset.decimal),
-      fiatValue: convertToFiatFromAsset(asset, getAssetRate(asset))
+      fiatValue: convertToFiatFromAsset(asset, getAssetRate(asset)),
+      uuid: asset.uuid
     }))
     .sort((a, b) => b.fiatValue - a.fiatValue);
 

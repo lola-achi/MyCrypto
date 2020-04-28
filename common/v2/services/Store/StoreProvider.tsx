@@ -40,6 +40,7 @@ import {
 } from 'v2/features/PurchaseMembership/config';
 import { DEFAULT_NETWORK } from 'v2/config';
 import { TUuid } from 'v2/types/uuid';
+import { useEffectOnce } from 'v2/vendor';
 
 import { getAccountsAssetsBalances, nestedToBigNumberJS } from './BalanceService';
 import { getStoreAccounts, getPendingTransactionsFromAccounts } from './helpers';
@@ -53,6 +54,7 @@ import { AccountContext, getDashboardAccounts } from './Account';
 import { SettingsContext } from './Settings';
 import { NetworkContext, getNetworkById } from './Network';
 import { findNextUnusedDefaultLabel, AddressBookContext } from './AddressBook';
+import { MyCryptoApiService } from '../ApiService';
 
 interface State {
   readonly accounts: StoreAccount[];
@@ -105,7 +107,7 @@ export const StoreProvider: React.FC = ({ children }) => {
     deleteAccount,
     createAccountWithID
   } = useContext(AccountContext);
-  const { assets } = useContext(AssetContext);
+  const { assets, updateAssets } = useContext(AssetContext);
   const { settings, updateSettingsAccounts } = useContext(SettingsContext);
   const { networks } = useContext(NetworkContext);
   const {
@@ -131,7 +133,7 @@ export const StoreProvider: React.FC = ({ children }) => {
   ]);
   const currentAccounts = useMemo(
     () => getDashboardAccounts(accounts, settings.dashboardAccounts),
-    [rawAccounts, settings.dashboardAccounts]
+    [rawAccounts, settings.dashboardAccounts, assets]
   );
 
   const [memberships, setMemberships] = useState<MembershipStatus[] | undefined>([]);
@@ -234,6 +236,11 @@ export const StoreProvider: React.FC = ({ children }) => {
   useEffect(() => {
     setPendingTransactions(getPendingTransactionsFromAccounts(currentAccounts));
   }, [currentAccounts]);
+
+  // fetch assets from api
+  useEffectOnce(() => {
+    MyCryptoApiService.instance.getAssets().then(updateAssets);
+  });
 
   // A change to pending txs is detected
   useEffect(() => {

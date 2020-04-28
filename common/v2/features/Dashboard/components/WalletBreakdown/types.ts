@@ -1,4 +1,4 @@
-import { IAccount, Fiat } from 'v2/types';
+import { IAccount, Fiat, TUuid } from 'v2/types';
 
 export interface Balance {
   name: string;
@@ -6,6 +6,7 @@ export interface Balance {
   fiatValue: number;
   ticker: string;
   isOther?: boolean;
+  uuid?: TUuid;
 }
 
 export interface WalletBreakdownProps {
