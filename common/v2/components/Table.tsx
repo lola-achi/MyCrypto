@@ -13,7 +13,7 @@ import React, {
 } from 'react';
 import styled, { StyledComponentClass } from 'styled-components';
 import { Theme } from '@mycrypto/ui';
-import * as R from 'ramda';
+import path from 'ramda/src/path';
 import isFunction from 'lodash/isFunction';
 
 import { noOp } from 'v2/utils';
@@ -74,9 +74,9 @@ const sharedCellProperties = ({ isReversed }: CellProps) => `
 `;
 
 const TableHead = styled.tr`
-  border-top: 0.0625em solid ${props => props.theme.tableHeadBorder};
-  border-bottom: 0.0625em solid ${props => props.theme.tableHeadBorder};
-  background: ${props => props.theme.tableHeadBackground};
+  border-top: 0.0625em solid ${(props) => props.theme.tableHeadBorder};
+  border-bottom: 0.0625em solid ${(props) => props.theme.tableHeadBorder};
+  background: ${(props) => props.theme.tableHeadBackground};
   font-size: 0.9em;
   & > th:first-child {
     padding-left: ${SPACING.BASE};
@@ -93,12 +93,12 @@ interface HeadingProps extends CellProps {
 
 const TableHeading = styled(Typography)<HeadingProps>`
   ${sharedCellProperties}
-  color: ${props => props.theme.headline};
+  color: ${(props) => props.theme.headline};
   font-weight: normal;
   text-transform: uppercase;
   letter-spacing: 0.0625em;
-  cursor: ${props => (props.isSortable ? 'pointer' : 'inherit')};
-    ${props =>
+  cursor: ${(props) => (props.isSortable ? 'pointer' : 'inherit')};
+    ${(props) =>
       props.isHidden &&
       `
     position: fixed;
@@ -117,7 +117,7 @@ TableHeading.defaultProps = {
 };
 
 const TableRow = styled.tr`
-  border-bottom: 0.0625em solid ${props => props.theme.tableRowBorder};
+  border-bottom: 0.0625em solid ${(props) => props.theme.tableRowBorder};
   & > td:first-child {
     padding-left: ${SPACING.BASE};
   }
@@ -168,15 +168,15 @@ export const getSortedRows = (
   const sortableColumnIndex = head.indexOf(sortableColumn);
   // Create an array containing the data from each row in the specified column.
   const sortableColumnEntries = body
-    .map(row => row[sortableColumnIndex])
-    .map(entry =>
+    .map((row) => row[sortableColumnIndex])
+    .map((entry) =>
       // If the entry is a string, wrap it.
       typeof entry === 'string' ? <React.Fragment>{entry}</React.Fragment> : entry
     );
   // Rearrange that array based on the selected sort.
   const sortedColumnEntries = [...sortableColumnEntries].sort(sortFunction);
   // Translate the new order into the indexes of the original order to determine the change.
-  const sortedColumnIndices = sortedColumnEntries.map(sortedEntry =>
+  const sortedColumnIndices = sortedColumnEntries.map((sortedEntry) =>
     sortableColumnEntries.indexOf(sortedEntry)
   );
   // Potentially reverse the new order depending on the sort direction.
@@ -185,7 +185,7 @@ export const getSortedRows = (
       ? sortedColumnIndices
       : sortedColumnIndices.reverse();
   // Apply the new order to all of the rows.
-  const sortedRows = finalSortedColumnIndices.map(index => body[index]);
+  const sortedRows = finalSortedColumnIndices.map((index) => body[index]);
 
   return sortedRows;
 };
@@ -336,7 +336,7 @@ class AbstractTable extends Component<Props, State> {
     }
 
     if (hiddenHeadings) {
-      hiddenHeadings.forEach(heading => {
+      hiddenHeadings.forEach((heading) => {
         if (!head.includes(heading)) {
           throw new Error(`Unused heading ${heading} found in hiddenHeadings in <Table />`);
         }
@@ -345,7 +345,7 @@ class AbstractTable extends Component<Props, State> {
   };
 
   private readonly toggleCollapseGroup = (title: string) =>
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       collapsedGroups: {
         ...prevState.collapsedGroups,
         [title]: !prevState.collapsedGroups[title]
@@ -353,7 +353,7 @@ class AbstractTable extends Component<Props, State> {
     }));
 
   private readonly toggleSortedColumnDirection = () =>
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       sortedColumnDirection:
         prevState.sortedColumnDirection === ColumnDirections.Forward
           ? ColumnDirections.Reverse
@@ -367,7 +367,7 @@ class AbstractTable extends Component<Props, State> {
     return config && config.sortableColumn
       ? {
           body: getSortedRows(head, body, config, sortedColumnDirection),
-          groups: groups!.map(group => ({
+          groups: groups!.map((group) => ({
             ...group,
             entries: getSortedRows(head, group.entries, config, sortedColumnDirection)
           }))
@@ -379,8 +379,7 @@ class AbstractTable extends Component<Props, State> {
     const { config, overlay, overlayRows } = this.props;
 
     // no click if overlay is shown or no handler function present
-    if ((overlay && overlayRows!.includes(rowIndex)) || !R.path(['handleRowClicked'], config))
-      return;
+    if ((overlay && overlayRows!.includes(rowIndex)) || !path(['handleRowClicked'], config)) return;
 
     config!.handleRowClicked!(rowIndex);
   };
