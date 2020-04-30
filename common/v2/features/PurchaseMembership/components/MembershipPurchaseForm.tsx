@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import { Formik, Form, Field, FieldProps } from 'formik';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import * as Yup from 'yup';
 
 import translate, { translateRaw } from 'v2/translations';
@@ -57,7 +57,7 @@ const FormFieldSubmitButton = styled(Button)`
 const MembershipForm = ({ isSubmitting, onComplete }: Props) => {
   const { accounts } = useContext(StoreContext);
   const { networks } = useContext(NetworkContext);
-  const network = networks.find(n => n.baseAsset === EtherUUID) as Network;
+  const network = networks.find((n) => n.baseAsset === EtherUUID) as Network;
   const relevantAccounts = accounts.filter(isEthereumAccount);
 
   return (
@@ -78,7 +78,7 @@ export const MembershipFormUI = ({
 }: UIProps) => {
   const { assets } = useContext(AssetContext);
   const defaultMembership = MEMBERSHIP_CONFIG[IMembershipId.onemonth];
-  const defaultAsset = assets.find(asset => asset.uuid === defaultMembership.assetUUID) as Asset;
+  const defaultAsset = assets.find((asset) => asset.uuid === defaultMembership.assetUUID) as Asset;
   const initialFormikValues: MembershipSimpleTxFormFull = {
     membershipSelected: defaultMembership,
     account: {} as StoreAccount,
@@ -110,8 +110,8 @@ export const MembershipFormUI = ({
             setFieldValue('nonce', nonce);
           };
           const isValid =
-            Object.values(errors).filter(error => error !== undefined && !isEmpty(error)).length ===
-            0;
+            Object.values(errors).filter((error) => error !== undefined && !isEmpty(error))
+              .length === 0;
 
           const { amount, asset, account: selectedAccount } = values;
           const convertedAsset = { name: asset.name, symbol: asset.ticker as TSymbol };
@@ -127,7 +127,7 @@ export const MembershipFormUI = ({
               asset &&
               selectedAccount &&
               !getAccountsWithAssetBalance(filteredAccounts, convertedAsset, amount).find(
-                a => a.uuid === selectedAccount.uuid
+                (a) => a.uuid === selectedAccount.uuid
               )
             ) {
               setFieldValue('account', undefined);
@@ -151,7 +151,7 @@ export const MembershipFormUI = ({
                         form.setFieldValue('membershipSelected', option.value); //if this gets deleted, it no longer shows as selected on interface, would like to set only object keys that are needed instead of full object
                         form.setFieldValue('amount', option.value.price);
                         const newAsset = assets.find(
-                          a => a.uuid === option.value.assetUUID
+                          (a) => a.uuid === option.value.assetUUID
                         ) as Asset;
                         form.setFieldValue('asset', newAsset);
                       }}
